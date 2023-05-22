@@ -1,0 +1,10 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:mysql://82.156.140.79:3306/gb
+    username: root
+    password: 0826gengbin
+
+  session:
+    timeout: 86400
