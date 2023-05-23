@@ -1,12 +1,12 @@
 package com.gb.usercenter.service.impl
 
 import com.gb.usercenter.entity.User
+import com.gb.usercenter.exception.CustomException
 import com.gb.usercenter.mapper.UserMapper
 import com.gb.usercenter.service.UserService
-import com.sun.org.apache.bcel.internal.generic.IAND
 import spock.lang.Specification
 
-import javax.annotation.Resource
+import javax.servlet.http.HttpServletRequest
 
 class UserServiceImplTest extends Specification {
 
@@ -33,7 +33,25 @@ class UserServiceImplTest extends Specification {
 
 
 
-    def "Login"() {
+    def "Login 异常情况 "() {
+        given:
+            def userService = new UserServiceImpl()
+            def request = Mock(HttpServletRequest)
+        when: "调用 login 方法"
+            userService.login(phone, password, request)
+
+        then: "捕获异常"
+            def exception = thrown(expectedException)
+                exception.message == expectedMessage
+
+        where: "校验参数"
+            phone           ||  password ||  expectedException   ||  expectedMessage
+            ""              ||      ""   ||    CustomException   ||  "请输入手机号和密码"
+            ""              ||    "test" ||   CustomException    ||  "请输入手机号和密码"
+            "18847160591"   ||      ""   ||   CustomException    ||  "请输入手机号和密码"
+            "18847160591"   ||      "test"   ||   CustomException    ||  "密码不能少于6位"
+            "11543536354"   ||    "test" ||    CustomException   ||     "手机号格式错误"
+            "13543-36354"   ||    "test" ||    CustomException   ||     "手机号格式错误"
     }
 
     def "SearchUsers"() {
